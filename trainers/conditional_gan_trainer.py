@@ -36,6 +36,7 @@ class ConditionalGANTrainer(gan_trainer.GANTrainer):
         epochs += latest_epoch
         for epoch in range(latest_epoch, epochs):
             for image_batch in dataset:
+                a = image_batch[1].numpy()
                 # plt.imshow(image_batch[1][0])
                 # img_to_plot = visualization.generate_and_save_images(self.generator, epoch + 1,
                 #                                                      test_seed,
