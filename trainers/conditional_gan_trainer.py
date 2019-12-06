@@ -55,20 +55,21 @@ class ConditionalGANTrainer(gan_trainer.GANTrainer):
                 # img_to_plot = visualization.generate_and_save_images(self.generator, epoch + 1,
                 #                                                      test_seed,
                 #                                                      num_examples_to_display=test_batch_size)
-                img_to_plot = visualization.generate_and_save_images(
-                    self.generator,
-                    epoch + 1,
-                    test_seed,
-                    num_examples_to_display=test_batch_size,
-                )
+                if train_step % 100 == 0:
+                    img_to_plot = visualization.generate_and_save_images(
+                        self.generator,
+                        epoch + 1,
+                        test_seed,
+                        num_examples_to_display=test_batch_size,
+                    )
                 # visualization.min_max(self.generator, epoch + 1,
                 #                       test_seed,
                 #                       num_examples_to_display=test_batch_size)
                 print(train_step)
                 train_step += 1
                 gen_loss, dis_loss = self.train_step(image_batch)
-                print('gen loss', gen_loss)
-                print('dis loss', dis_loss)
+                # print('gen loss', gen_loss)
+                # print('dis loss', dis_loss)
                 with self.summary_writer.as_default():
                     tf.summary.scalar("generator_loss", gen_loss, step=train_step)
                     tf.summary.scalar("discriminator_loss", dis_loss, step=train_step)
