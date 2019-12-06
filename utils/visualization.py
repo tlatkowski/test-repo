@@ -47,10 +47,21 @@ def min_max(generator_model, epoch, test_input, cmap=None,
     plt.axis('off')
 
 
-def generate_and_save_images(generator_model, epoch, test_input, cmap=None,
-                             num_examples_to_display=16):
+def generate_and_save_images(
+        generator_model,
+        epoch,
+        test_input,
+        cmap=None,
+        num_examples_to_display=16,
+):
+    # import tensorflow as tf
     display.clear_output(wait=True)
+    # test_seed = tf.random.normal([1, 100])
     predictions = generator_model(test_input, training=False)
+    print(predictions)
+    print(max(predictions))
+    print(min(predictions))
+    # predictions = generator_model([test_seed, test_input[0]], training=False)
     if predictions.shape[0] < num_examples_to_display:
         raise ValueError("Input batch size cannot be less than number of example to display.")
     
@@ -60,6 +71,7 @@ def generate_and_save_images(generator_model, epoch, test_input, cmap=None,
         plt.subplot(n, n, i + 1)
         if generator_model.num_channels == 3:
             img_to_plot = predictions[i, :, :, :] * 127.5 + 127.5
+            # img_to_plot = np.concatenate([img_to_plot, test_input[1][0] * 127.5 + 127.5], axis=1)
         else:
             img_to_plot = predictions[i, :, :, 0] * 127.5 + 127.5
         plt.imshow(img_to_plot/255.0, cmap=cmap)

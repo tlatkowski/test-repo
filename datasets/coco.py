@@ -4,9 +4,10 @@ import os
 
 import numpy as np
 import tensorflow as tf
-import tensorflow_datasets as tfds
 from absl import logging
 from tensorflow.python.keras import preprocessing
+import tensorflow_datasets as tfds
+
 
 logging.set_verbosity(logging.INFO)
 
@@ -66,27 +67,22 @@ def load_vactorized_data(captions_path=CAPTIONS_DIR, images_path=IMAGES_DIR):
     return images_paths, captions_texts
 
 
-IMG_WIDTH = 64
-IMG_HEIGHT = 64
+IMG_WIDTH = 256
+IMG_HEIGHT = 256
 
 
 def decode_img(img):
     # convert the compressed string to a 3D uint8 tensor
     img = tf.image.decode_jpeg(img, channels=3)
     # Use `convert_image_dtype` to convert to floats in the [0,1] range.
-    # img = tf.image.convert_image_dtype(img, tf.float32)
-    # img *= 255.0
-    img = tf.cast(img, dtype=tf.float32)
+    img = tf.image.convert_image_dtype(img, tf.float32)
+    img *= 255.0
     img = (img - 127.5) / 127.5
     # resize the image to the desired size.
     return tf.image.resize(img, (IMG_WIDTH, IMG_HEIGHT))
 
 
-def parse_text_and_load_img(text, image):
-    # encoded_text = encoder.encode(text)
-    img = tf.io.read_file(image)
-    img = decode_img(img)
-    return text, img
+
 
 
 def coco_dataset_iterator(captions_path=CAPTIONS_DIR, images_path=IMAGES_DIR):
@@ -101,22 +97,27 @@ def coco_dataset_iterator(captions_path=CAPTIONS_DIR, images_path=IMAGES_DIR):
         if len(tokens) > max_len:
             max_len = len(tokens)
     encoder = tfds.features.text.TokenTextEncoder(vocab)
-    
+
     encoded = []
     for text in captions_texts:
         e = encoder.encode(text)
         e_padded = np.pad(np.array(e), pad_width=(0, max_len - len(e)))
         encoded.append(e_padded)
     
-    print(len(images_paths) / 64)
+    def parse_text_and_load_img(text, image):
+        # encoded_text = encoder.encode(text)
+        img = tf.io.read_file(image)
+        img = decode_img(img)
+        return text, img
+    print(len(images_paths)/64)
     dataset = tf.data.Dataset.from_tensor_slices((encoded, images_paths))
     dataset = dataset.map(parse_text_and_load_img)
     # iterator = dataset.make_one_shot_iterator()
     dataset = dataset.shuffle(10)
-    dataset = dataset.batch(4)
+    dataset = dataset.batch(1)
     dataset = dataset.prefetch(10)
     # iterator = dataset.make_one_shot_iterator()
-    
+
     # i = next(iter(dataset))
     # print(i)
     return dataset, max_len, len(vocab)
