@@ -26,11 +26,11 @@ class Text2ImageGAN:
         # self.discriminator = discriminators.ConditionalDiscriminator(vocab_size, embedding_size, max_sentence_length)
         self.discriminator = patch_discriminator.PatchDiscriminator()
         self.gan_trainer = ConditionalGANTrainer(
-            batch_size=1,
+            batch_size=4,
             generator=self.generator,
             discriminator=self.discriminator,
-            lr_generator=0.0001,
-            lr_discriminator=0.0001,
+            lr_generator=0.0002,
+            lr_discriminator=0.0002,
             continue_training=False,
         )
     

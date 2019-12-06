@@ -114,7 +114,7 @@ def coco_dataset_iterator(captions_path=CAPTIONS_DIR, images_path=IMAGES_DIR):
     dataset = dataset.map(parse_text_and_load_img)
     # iterator = dataset.make_one_shot_iterator()
     dataset = dataset.shuffle(10)
-    dataset = dataset.batch(1)
+    dataset = dataset.batch(4)
     dataset = dataset.prefetch(10)
     # iterator = dataset.make_one_shot_iterator()
 

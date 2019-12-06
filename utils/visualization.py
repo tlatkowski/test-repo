@@ -58,9 +58,9 @@ def generate_and_save_images(
     display.clear_output(wait=True)
     # test_seed = tf.random.normal([1, 100])
     predictions = generator_model(test_input, training=False)
-    print(predictions)
-    print(max(predictions))
-    print(min(predictions))
+    # print(predictions)
+    # print(max(predictions))
+    # print(min(predictions))
     # predictions = generator_model([test_seed, test_input[0]], training=False)
     if predictions.shape[0] < num_examples_to_display:
         raise ValueError("Input batch size cannot be less than number of example to display.")
