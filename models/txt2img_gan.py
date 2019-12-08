@@ -16,7 +16,7 @@ class Text2ImageGAN:
         img_width = 28
         num_channels = 1
         embedding_size = 64
-        self.num_epochs = 10
+        self.num_epochs = 20
         self.generator = generators.TextToImageGenerator(
             max_sequence_length=max_sentence_length,
             embedding_size=embedding_size,

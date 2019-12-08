@@ -55,10 +55,10 @@ class ConditionalGANTrainer(gan_trainer.GANTrainer):
                 # img_to_plot = visualization.generate_and_save_images(self.generator, epoch + 1,
                 #                                                      test_seed,
                 #                                                      num_examples_to_display=test_batch_size)
-                if train_step % 100 == 0:
+                if train_step % 1000 == 0:
                     img_to_plot = visualization.generate_and_save_images(
                         self.generator,
-                        epoch + 1,
+                        train_step,
                         test_seed,
                         num_examples_to_display=test_batch_size,
                     )
