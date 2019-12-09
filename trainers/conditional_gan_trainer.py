@@ -38,7 +38,7 @@ class ConditionalGANTrainer(gan_trainer.GANTrainer):
         labels = np.reshape(labels, newshape=(1, 49))
         # test_seed = [tf.random.normal([test_batch_size, 100]), labels]
         # test_seed = tf.random.normal([test_batch_size, 100])
-        test_seed = tf.random.normal([self.batch_size, 100])
+        test_seed = tf.random.normal([1, 100])
 
         train_step = 0
         latest_checkpoint_epoch = 0
@@ -59,13 +59,13 @@ class ConditionalGANTrainer(gan_trainer.GANTrainer):
                     img_to_plot = visualization.generate_and_save_images(
                         self.generator,
                         train_step,
-                        test_seed,
+                        [test_seed, labels],
                         num_examples_to_display=test_batch_size,
                     )
                 # visualization.min_max(self.generator, epoch + 1,
                 #                       test_seed,
                 #                       num_examples_to_display=test_batch_size)
-                print(train_step)
+                    print(train_step)
                 train_step += 1
                 gen_loss, dis_loss = self.train_step(image_batch)
                 # print('gen loss', gen_loss)
@@ -75,7 +75,7 @@ class ConditionalGANTrainer(gan_trainer.GANTrainer):
                     tf.summary.scalar("discriminator_loss", dis_loss, step=train_step)
             
             img_to_plot = visualization.generate_and_save_images(self.generator, epoch + 1,
-                                                                 test_seed,
+                                                                 [test_seed, labels],
                                                                  num_examples_to_display=test_batch_size)
             with self.summary_writer.as_default():
                 tf.summary.image('test_images', np.reshape(img_to_plot, newshape=(1, 480, 640, 4)),
@@ -92,13 +92,13 @@ class ConditionalGANTrainer(gan_trainer.GANTrainer):
         z = tf.random.normal([batch_size, 100])
         with tf.GradientTape() as gen_tape, tf.GradientTape() as disc_tape:
             # fake_images = self.generator([z, real_captions], training=True)
-            # fake_images = self.generator([z, real_captions], training=True)
-            fake_images = self.generator(z, training=True)
+            fake_images = self.generator([z, real_captions], training=True)
+            # fake_images = self.generator(z, training=True)
             
-            # real_output = self.discriminator([real_captions, real_images], training=True)
-            real_output = self.discriminator(real_images, training=True)
-            # fake_output = self.discriminator([real_captions, fake_images], training=True)
-            fake_output = self.discriminator(fake_images, training=True)
+            real_output = self.discriminator([real_captions, real_images], training=True)
+            # real_output = self.discriminator(real_images, training=True)
+            fake_output = self.discriminator([real_captions, fake_images], training=True)
+            # fake_output = self.discriminator(fake_images, training=True)
             
             gen_loss = losses.generator_loss(fake_output)
             disc_loss = losses.discriminator_loss(real_output, fake_output)
